@@ -1,6 +1,7 @@
 package com.matheuscordeiro.carsapi.controller;
 
 import com.matheuscordeiro.carsapi.dto.CarPostDto;
+import com.matheuscordeiro.carsapi.message.KafkaProducerMessage;
 import com.matheuscordeiro.carsapi.service.CarPostStoreService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,8 +14,17 @@ import java.util.List;
 public class CarPostController {
     private final CarPostStoreService carPostStoreService;
 
-    public CarPostController(CarPostStoreService carPostStoreService) {
+    private final KafkaProducerMessage kafkaProducerMessage;
+
+    public CarPostController(CarPostStoreService carPostStoreService, KafkaProducerMessage kafkaProducerMessage) {
         this.carPostStoreService = carPostStoreService;
+        this.kafkaProducerMessage = kafkaProducerMessage;
+    }
+
+    @PostMapping("/post")
+    public ResponseEntity<Void> postCarForSale(@RequestBody CarPostDto carPostDto) {
+        kafkaProducerMessage.sendMessage(carPostDto);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @GetMapping("/posts}")
