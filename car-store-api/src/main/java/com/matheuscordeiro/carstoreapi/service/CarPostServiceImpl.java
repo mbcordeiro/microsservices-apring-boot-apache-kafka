@@ -6,7 +6,6 @@ import com.matheuscordeiro.carstoreapi.repository.CarPostRepository;
 import com.matheuscordeiro.carstoreapi.repository.OwnerPostRepository;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -62,7 +61,7 @@ public class CarPostServiceImpl implements  CarPostService {
                 .engineVersion(carPost.getEngineVersion())
                 .ownerName(carPost.getOwnerPost().getName())
                 .createdDate(carPost.getCreatedDate().toString())
-                .price(carPost.getPrice().toString())
+                .price(carPost.getPrice())
                 .build();
 
     }
@@ -84,7 +83,7 @@ public class CarPostServiceImpl implements  CarPostService {
         carPost.setBrand(carPostDto.brand());
         carPost.setDescription(carPostDto.description());
         carPost.setContact(carPost.getContact());
-        carPost.setPrice(new BigDecimal(carPostDto.price()));
+        carPost.setPrice(carPostDto.price());
         carPost.setEngineVersion(carPostDto.engineVersion());
         carPost.setModel(carPostDto.model());
     }
