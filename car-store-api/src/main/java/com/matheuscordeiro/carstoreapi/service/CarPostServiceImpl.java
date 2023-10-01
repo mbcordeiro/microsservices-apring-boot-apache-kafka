@@ -3,6 +3,7 @@ package com.matheuscordeiro.carstoreapi.service;
 import com.matheuscordeiro.carstoreapi.dto.CarPostDto;
 import com.matheuscordeiro.carstoreapi.entity.CarPost;
 import com.matheuscordeiro.carstoreapi.repository.CarPostRepository;
+import com.matheuscordeiro.carstoreapi.repository.OwnerPostRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -14,13 +15,18 @@ import java.util.NoSuchElementException;
 public class CarPostServiceImpl implements  CarPostService {
 
     private final CarPostRepository carPostRepository;
+    private final OwnerPostRepository ownerPostRepository;
 
-    public CarPostServiceImpl(CarPostRepository carPostRepository) {
+    public CarPostServiceImpl(CarPostRepository carPostRepository,
+                              OwnerPostRepository ownerPostRepository) {
         this.carPostRepository = carPostRepository;
+        this.ownerPostRepository = ownerPostRepository;
     }
 
     @Override
     public void newPostDetails(CarPostDto carPostDto) {
+        final var carPost = mapCarDtoToEntity(carPostDto);
+        carPostRepository.save(carPost);
     }
 
     @Override
@@ -35,7 +41,7 @@ public class CarPostServiceImpl implements  CarPostService {
     @Override
     public void changeCarSale(CarPostDto carPostDto, Long id) {
         carPostRepository.findById(id).ifPresentOrElse(carPost -> {
-            mapCarPostDtoToCarPost(carPostDto, carPost);
+            setCarPost(carPostDto, carPost);
             carPostRepository.save(carPost);
         }, () -> {
                 throw new NoSuchElementException();
@@ -61,7 +67,20 @@ public class CarPostServiceImpl implements  CarPostService {
 
     }
 
-    private static void mapCarPostDtoToCarPost(CarPostDto carPostDto, CarPost carPost) {
+    private CarPost mapCarDtoToEntity(CarPostDto carPostDto) {
+        final var carPost = new CarPost();
+        ownerPostRepository.findById(carPostDto.ownerId()).ifPresentOrElse(ownerPost -> {
+            carPost.setOwnerPost(ownerPost);
+            carPost.setContact(ownerPost.getContact());
+        }, () -> {
+            throw new RuntimeException();
+        });
+
+        setCarPost(carPostDto, carPost);
+        return carPost;
+    }
+
+    private static void setCarPost(CarPostDto carPostDto, CarPost carPost) {
         carPost.setBrand(carPostDto.brand());
         carPost.setDescription(carPostDto.description());
         carPost.setContact(carPost.getContact());

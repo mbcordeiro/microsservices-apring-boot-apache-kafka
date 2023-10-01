@@ -20,5 +20,5 @@ public class OwnerPost {
 
     private String type;
 
-    private String contactNumber;
+    private String contact;
 }
