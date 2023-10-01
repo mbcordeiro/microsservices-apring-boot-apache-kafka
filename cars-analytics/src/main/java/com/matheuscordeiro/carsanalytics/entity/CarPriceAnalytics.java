@@ -8,11 +8,11 @@ import lombok.Setter;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "car_model")
+@Table(name = "car_price_analytics")
 @Getter
 @Setter
 @NoArgsConstructor
-public class CarModelPrice {
+public class CarPriceAnalytics {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
