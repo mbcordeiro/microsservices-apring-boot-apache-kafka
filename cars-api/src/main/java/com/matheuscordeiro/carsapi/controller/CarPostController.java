@@ -3,6 +3,7 @@ package com.matheuscordeiro.carsapi.controller;
 import com.matheuscordeiro.carsapi.dto.CarPostDto;
 import com.matheuscordeiro.carsapi.message.KafkaProducerMessage;
 import com.matheuscordeiro.carsapi.service.CarPostStoreService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/cars")
+@Slf4j
 public class CarPostController {
     private final CarPostStoreService carPostStoreService;
 
@@ -23,6 +25,7 @@ public class CarPostController {
 
     @PostMapping("/post")
     public ResponseEntity<Void> postCarForSale(@RequestBody CarPostDto carPostDto) {
+        log.info("CARS API - Producer Car Post information: {}", carPostDto);
         kafkaProducerMessage.sendMessage(carPostDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
